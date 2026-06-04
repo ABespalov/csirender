@@ -1,4 +1,4 @@
-// Copyright (c) 2026, Anton Bespalov
+// Copyright (c) 2026, Anton Bespalov. Licensed under the MIT License.
 //
 // Package csirender provides an engine for declarative rendering of visual dashboards.
 package csirender

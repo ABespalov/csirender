@@ -1,6 +1,6 @@
 # csirender
 
-![Version](https://img.shields.io/badge/version-v0.1.0-blue)
+![Version](https://img.shields.io/badge/version-v0.1.1a-blue)
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
 
 `csirender` — это мощный, расширяемый движок декларативного 2D-рендеринга, написанный на Go. Он позволяет проектировать динамические дашборды и интерфейсы с помощью простых YAML или JSON конфигураций и рендерить их в стандартные изображения (PNG, BMP) или сырые данные, оптимизированные для EPD (e-ink) экранов.
@@ -180,4 +180,4 @@ if err != nil {
 ---
 
 ## 📄 Лицензия
-Copyright (c) 2026, Anton Bespalov. Все права защищены.
+Copyright (c) 2026, Anton Bespalov. Распространяется под [лицензией MIT](LICENSE).

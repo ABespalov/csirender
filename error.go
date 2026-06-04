@@ -1,4 +1,4 @@
-// Copyright (c) 2026, Anton Bespalov
+// Copyright (c) 2026, Anton Bespalov. Licensed under the MIT License.
 package csirender
 
 import (

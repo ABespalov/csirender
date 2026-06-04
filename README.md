@@ -1,6 +1,6 @@
 # csirender
 
-![Version](https://img.shields.io/badge/version-v0.1.0-blue)
+![Version](https://img.shields.io/badge/version-v0.1.1a-blue)
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
 
 `csirender` is a powerful, extensible, declarative 2D rendering engine written in Go. It enables you to design dynamic, data-driven dashboards and interfaces using simple YAML or JSON configurations, and render them to standard image formats (PNG, BMP) or raw data streams optimized for EPD (e-ink) displays.
@@ -180,4 +180,4 @@ Draws geometric primitives.
 ---
 
 ## 📄 License
-Copyright (c) 2026, Anton Bespalov. All rights reserved.
+Copyright (c) 2026, Anton Bespalov. Licensed under the [MIT License](LICENSE).
