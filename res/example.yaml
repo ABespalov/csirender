@@ -1,0 +1,187 @@
+screen:
+  width: 800
+  height: 480
+  anti_aliasing: true
+  palette:
+    white: "#FFFFFF"
+    black: "#000000"
+    red: "#FF0000"
+    green: "#00FF00"
+
+error:
+  margin:
+    x: 40
+    y: 40
+  size: 32
+
+defaults:
+  fit_text: true
+  align:
+    h: center
+    v: center
+
+output:
+  format: png
+  background: white
+
+fonts:
+  tiny:
+    file: "res/fonts/Inter-Regular.ttf"
+    size: 14
+    hinting: full
+  huge:
+    file: "res/fonts/Inter-Bold.ttf"
+    size: 72
+    hinting: full
+
+layout:
+  # Example of a Text Element
+  - type: text
+    position:
+      x: 0
+      y: 10
+    size:
+      w: 800
+      h: 50
+    template: "Current Dashboard Status"
+    font:
+      face: huge
+      fg: black
+    align:
+      h: center
+      v: center
+
+  # Example of a Value Card with label, value, and unit
+  - type: value
+    source: "temperature"
+    position:
+      x: 50
+      y: 100
+    size:
+      w: 300
+      h: 150
+    radius: 12.0
+    padding: 10.0
+    format: "%.1f"
+    border:
+      t: 2.0
+      color: black
+      bg: white
+      padding: 10.0
+      affects: ["value", "label", "unit"]
+      thresholds:
+        # Dynamic styling: if temperature > 30, background becomes red
+        - condition: "val > 30.0"
+          bg: red
+          fg: white
+    value:
+      font:
+        face: huge
+        fg: black
+      align:
+        h: center
+        v: center
+    label:
+      template: "Room Temp"
+      font:
+        face: tiny
+        fg: black
+      align:
+        h: left
+        v: top
+    unit:
+      template: "°C"
+      font:
+        face: tiny
+        fg: black
+      align:
+        p: right
+
+  # Example of a Chart Element
+  - type: chart
+    source: "temperature_history"
+    position:
+      x: 400
+      y: 100
+    size:
+      w: 350
+      h: 150
+    points: 24
+    axis:
+      x:
+        show: true
+        fg: black
+        labels:
+          show: true
+          count: 5
+          format: "15:04"
+          font: tiny
+      y:
+        show: true
+        fg: black
+        labels:
+          show: true
+          count: 4
+          font: tiny
+    thresholds:
+      - condition: "val > 30.0"
+        bg: red
+      - condition: "val <= 30.0"
+        bg: green
+    threshold_lines:
+      - value: 30.0
+        color: red
+        t: 2.0
+        style: "dashed.4.4"
+
+  # Example of a Separator Line
+  - type: line
+    position:
+      x: 50
+      y: 280
+    size:
+      w: 700
+      h: 2
+    t: 2.0
+    color: black
+
+  # Example of an Image with transparency and thresholds
+  - type: image
+    source: "weather_condition"
+    position:
+      x: 50
+      y: 300
+    size:
+      w: 120
+      h: 120
+    path: "res/images/default.png"
+    mode: "fit"
+    align:
+      h: "center"
+      v: "center"
+    opacity: 0.8
+    thresholds:
+      - condition: "val == 'rain'"
+        path: "res/images/rain.png"
+        opacity: 1.0
+      - condition: "val == 'sun'"
+        path: "res/images/sun.png"
+        opacity: 1.0
+
+  # Example of a Shape (Polygon/Triangle acting as a compass arrow)
+  - type: shape
+    kind: "polygon"
+    source: "wind_direction"
+    sides: 3
+    position:
+      x: 200
+      y: 300
+    size:
+      w: 80
+      h: 80
+    color: "#ff0000"
+    border:
+      t: 2.0
+      color: "#880000"
+    rotation: 90
+    rotation_expr: "wind_direction"

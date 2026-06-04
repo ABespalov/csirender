@@ -1,0 +1,190 @@
+{
+  "screen": {
+    "width": 800,
+    "height": 480,
+    "anti_aliasing": true,
+    "palette": {
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "red": "#FF0000",
+      "green": "#00FF00"
+    }
+  },
+  "error": {
+    "margin": {
+      "x": 40,
+      "y": 40
+    },
+    "size": 32
+  },
+  "defaults": {
+    "fit_text": true,
+    "align": {
+      "h": "center",
+      "v": "center"
+    }
+  },
+  "output": {
+    "format": "png",
+    "background": "white"
+  },
+  "fonts": {
+    "tiny": {
+      "file": "res/fonts/Inter-Regular.ttf",
+      "size": 14,
+      "hinting": "full"
+    },
+    "huge": {
+      "file": "res/fonts/Inter-Bold.ttf",
+      "size": 72,
+      "hinting": "full"
+    }
+  },
+  "layout": [
+    {
+      "type": "text",
+      "position": {
+        "x": 0,
+        "y": 10
+      },
+      "size": {
+        "w": 800,
+        "h": 50
+      },
+      "template": "Current Dashboard Status",
+      "font": {
+        "face": "huge",
+        "fg": "black"
+      },
+      "align": {
+        "h": "center",
+        "v": "center"
+      }
+    },
+    {
+      "type": "value",
+      "source": "temperature",
+      "position": {
+        "x": 50,
+        "y": 100
+      },
+      "size": {
+        "w": 300,
+        "h": 150
+      },
+      "radius": 12.0,
+      "padding": 10.0,
+      "format": "%.1f",
+      "border": {
+        "t": 2.0,
+        "color": "black",
+        "bg": "white",
+        "padding": 10.0,
+        "affects": ["value", "label", "unit"],
+        "thresholds": [
+          {
+            "condition": "val > 30.0",
+            "bg": "red",
+            "fg": "white"
+          }
+        ]
+      },
+      "value": {
+        "font": {
+          "face": "huge",
+          "fg": "black"
+        },
+        "align": {
+          "h": "center",
+          "v": "center"
+        }
+      },
+      "label": {
+        "template": "Room Temp",
+        "font": {
+          "face": "tiny",
+          "fg": "black"
+        },
+        "align": {
+          "h": "left",
+          "v": "top"
+        }
+      },
+      "unit": {
+        "template": "°C",
+        "font": {
+          "face": "tiny",
+          "fg": "black"
+        },
+        "align": {
+          "p": "right"
+        }
+      }
+    },
+    {
+      "type": "line",
+      "position": {
+        "x": 50,
+        "y": 280
+      },
+      "size": {
+        "w": 700,
+        "h": 2
+      },
+      "t": 2.0,
+      "color": "black"
+    },
+    {
+      "type": "image",
+      "source": "weather_condition",
+      "position": {
+        "x": 50,
+        "y": 300
+      },
+      "size": {
+        "w": 120,
+        "h": 120
+      },
+      "path": "res/images/default.png",
+      "mode": "fit",
+      "align": {
+        "h": "center",
+        "v": "center"
+      },
+      "opacity": 0.8,
+      "thresholds": [
+        {
+          "condition": "val == 'rain'",
+          "path": "res/images/rain.png",
+          "opacity": 1.0
+        },
+        {
+          "condition": "val == 'sun'",
+          "path": "res/images/sun.png",
+          "opacity": 1.0
+        }
+      ]
+    },
+    {
+      "type": "shape",
+      "kind": "polygon",
+      "source": "wind_direction",
+      "sides": 3,
+      "position": {
+        "x": 200,
+        "y": 300
+      },
+      "size": {
+        "w": 80,
+        "h": 80
+      },
+      "color": "#ff0000",
+      "border": {
+        "t": 2.0,
+        "color": "#880000"
+      },
+      "rotation": 90,
+      "rotation_expr": "wind_direction"
+    }
+  ]
+}
