@@ -5,8 +5,8 @@
 
 `csirender` is a powerful, extensible, declarative 2D rendering engine written in Go. It enables you to design dynamic, data-driven dashboards and interfaces using simple YAML or JSON configurations, and render them to standard image formats (PNG, BMP) or raw data streams optimized for EPD (e-ink) displays.
 
-![Example Render](assets/images/example_render.png)
-*(Image generated automatically from [`assets/example.yaml`](assets/example.yaml))*
+![Example Render](examples/assets/images/example_render.png)
+*(Image generated automatically from [`examples/assets/example.yaml`](examples/assets/example.yaml))*
 
 ---
 
@@ -157,8 +157,8 @@ Renders bitmap files.
 - **Dynamic Swapping**:
   ```yaml
   thresholds:
-    - condition: "val == 'rain'"
-      path: "assets/images/rain.png"
+      - condition: "val == 'rain'"
+        path: "examples/assets/images/rain.png"
   ```
 
 #### 5. Shape (`type: shape`)

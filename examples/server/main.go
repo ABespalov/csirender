@@ -32,7 +32,7 @@ func handleRender(w http.ResponseWriter, r *http.Request) {
 	// 1. Load the layout configuration.
 	// Since we use the csirender parser, this is heavily cached.
 	// We go up one level since this runs in examples/server/
-	cfg, err := parser.Parse("../../assets/example.yaml")
+	cfg, err := parser.Parse("../assets/example.yaml")
 	if err != nil {
 		http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
 		return

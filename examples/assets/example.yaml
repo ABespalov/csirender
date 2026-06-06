@@ -26,11 +26,11 @@ output:
 
 fonts:
   inter_regular:
-    file: "assets/fonts/Inter-Regular.ttf"
+    file: "examples/assets/fonts/Inter-Regular.ttf"
     size: 24
     hinting: "none"
   inter_bold:
-    file: "assets/fonts/Inter-Bold.ttf"
+    file: "examples/assets/fonts/Inter-Bold.ttf"
     size: 24
     hinting: "none"
 
@@ -154,15 +154,15 @@ layout:
     size:
       w: 236
       h: 218
-    path: "assets/images/default.png"
+    path: "examples/assets/images/default.png"
     mode: center
     opacity: 1.0
     thresholds:
       - condition: "val == 'rain'"
-        path: "assets/images/rain.png"
+        path: "examples/assets/images/rain.png"
         opacity: 0.8
       - condition: "val == 'sun'"
-        path: "assets/images/sun.png"
+        path: "examples/assets/images/sun.png"
         opacity: 1.0
 
   # Example of a Shape (Polygon/Triangle acting as a compass arrow)

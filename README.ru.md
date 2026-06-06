@@ -5,8 +5,8 @@
 
 `csirender` — это мощный, расширяемый движок декларативного 2D-рендеринга, написанный на Go. Он позволяет проектировать динамические дашборды и интерфейсы с помощью простых YAML или JSON конфигураций и рендерить их в стандартные изображения (PNG, BMP) или сырые данные, оптимизированные для EPD (e-ink) экранов.
 
-![Пример рендера](assets/images/example_render.png)
-*(Изображение сгенерировано автоматически из файла [`assets/example.yaml`](assets/example.yaml))*
+![Пример рендера](examples/assets/images/example_render.png)
+*(Изображение сгенерировано автоматически из файла [`examples/assets/example.yaml`](examples/assets/example.yaml))*
 
 ---
 
@@ -157,8 +157,8 @@ if err != nil {
 - **Динамическая смена**:
   ```yaml
   thresholds:
-    - condition: "val == 'rain'"
-      path: "assets/images/rain.png"
+      - condition: "val == 'rain'"
+        path: "examples/assets/images/rain.png"
   ```
 
 #### 5. Фигура (`type: shape`)
