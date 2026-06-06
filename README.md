@@ -1,12 +1,12 @@
 # csirender
 
-![Version](https://img.shields.io/badge/version-v0.1.1a-blue)
+![Version](https://img.shields.io/badge/version-v0.2.0-blue)
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
 
 `csirender` is a powerful, extensible, declarative 2D rendering engine written in Go. It enables you to design dynamic, data-driven dashboards and interfaces using simple YAML or JSON configurations, and render them to standard image formats (PNG, BMP) or raw data streams optimized for EPD (e-ink) displays.
 
-![Example Render](res/images/example_render.png)
-*(Image generated automatically from [`res/example.yaml`](res/example.yaml))*
+![Example Render](assets/images/example_render.png)
+*(Image generated automatically from [`assets/example.yaml`](assets/example.yaml))*
 
 ---
 
@@ -72,18 +72,22 @@ Create an `Engine`, feed it your live data via `RenderData`, and generate the fi
 ```go
 engine := csirender.New()
 
-data := csirender.RenderData{
-	Values: map[string]interface{}{
-		"temperature": 28.5,
-		"weather_condition": "sun",
-	},
-	Charts: map[string][]float64{
-		"temperature_history": {20, 22, 25, 27, 28.5},
+// Wrap flat maps using MapDataProvider for backward compatibility,
+// or implement your own DataProvider for lazy evaluation!
+data := &csirender.MapDataProvider{
+	Data: csirender.RenderData{
+		Values: map[string]interface{}{
+			"temperature": 28.5,
+			"weather_condition": "sun",
+		},
+		Charts: map[string][]float64{
+			"temperature_history": {20, 22, 25, 27, 28.5},
+		},
 	},
 }
 
-// Render returns an image.Image
-img, err := engine.Render(&cfg.LayoutConfig, data)
+// RenderWithProvider returns an image.Image
+img, err := engine.RenderWithProvider(&cfg.LayoutConfig, data)
 if err != nil {
 	panic(err)
 }
@@ -91,7 +95,7 @@ if err != nil {
 // You can now encode `img` to PNG/BMP and send it over HTTP or SPI.
 ```
 
-*For a complete, runnable client-server architecture, see the [`res/server/`](res/server/) and [`res/client/`](res/client/) examples.*
+*For a complete, runnable client-server architecture, see the [`examples/server/`](examples/server/) and [`examples/client/`](examples/client/) examples.*
 
 ---
 
@@ -154,7 +158,7 @@ Renders bitmap files.
   ```yaml
   thresholds:
     - condition: "val == 'rain'"
-      path: "res/images/rain.png"
+      path: "assets/images/rain.png"
   ```
 
 #### 5. Shape (`type: shape`)
@@ -169,6 +173,11 @@ Draws geometric primitives.
 ---
 
 ## 📜 Changelog
+
+### v0.2.0
+- Replaced `RenderData` with `DataProvider` interface for lazy evaluation of telemetry values and charts.
+- Added `RenderWithProvider` for new API consumers.
+- Maintained backward compatibility via `MapDataProvider`.
 
 ### v0.1.0 (Initial Release)
 - Core declarative rendering engine.

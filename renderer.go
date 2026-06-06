@@ -11,7 +11,18 @@ import (
 )
 
 // Render executes the full dashboard rendering pass and returns an image.
+// Deprecated: use RenderWithProvider instead for lazy evaluation.
 func (e *Engine) Render(cfg *LayoutConfig, data RenderData) (image.Image, error) {
+	provider := &MapDataProvider{
+		Data:     data,
+		Resolver: e.Resolver,
+		Enricher: e.Enricher,
+	}
+	return e.RenderWithProvider(cfg, provider)
+}
+
+// RenderWithProvider executes the full dashboard rendering pass using a lazy DataProvider.
+func (e *Engine) RenderWithProvider(cfg *LayoutConfig, provider DataProvider) (image.Image, error) {
 	if cfg.Screen.Width <= 0 || cfg.Screen.Height <= 0 {
 		return nil, fmt.Errorf("invalid screen dimensions: %dx%d", cfg.Screen.Width, cfg.Screen.Height)
 	}
@@ -19,10 +30,8 @@ func (e *Engine) Render(cfg *LayoutConfig, data RenderData) (image.Image, error)
 	rc := &RenderContext{
 		dc:        gg.NewContext(cfg.Screen.Width, cfg.Screen.Height),
 		cfg:       cfg,
-		data:      data,
+		provider:  provider,
 		fontCache: make(map[string]font.Face),
-		Resolver:  e.Resolver,
-		Enricher:  e.Enricher,
 		engine:    e,
 	}
 

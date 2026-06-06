@@ -9,6 +9,31 @@ import (
 	"time"
 )
 
+// LocalDataProvider wraps an existing DataProvider and overrides specific keys.
+type LocalDataProvider struct {
+	Parent   DataProvider
+	Overrides map[string]interface{}
+}
+
+func (l *LocalDataProvider) GetValue(key string) (interface{}, bool) {
+	if val, ok := l.Overrides[key]; ok {
+		return val, true
+	}
+	return l.Parent.GetValue(key)
+}
+
+func (l *LocalDataProvider) GetChart(source string) ([]float64, bool) {
+	return l.Parent.GetChart(source)
+}
+
+func (l *LocalDataProvider) ResolveThreshold(condition string, chartSource string) (float64, bool) {
+	return l.Parent.ResolveThreshold(condition, chartSource)
+}
+
+func (l *LocalDataProvider) EnrichTelemetry(source string, value float64) map[string]interface{} {
+	return l.Parent.EnrichTelemetry(source, value)
+}
+
 // parseAlignFraction parses layout ratio fractions like "1/2" or static floats.
 func parseAlignFraction(s string) (float64, bool) {
 	if s == "" {
@@ -128,7 +153,7 @@ func (rc *RenderContext) resolvePlaceholders(template string) string {
 			format = strings.TrimSpace(content[idx:])
 		}
 
-		if val, ok := rc.data.Values[varName]; ok {
+		if val, ok := rc.provider.GetValue(varName); ok {
 			formatted := fmt.Sprintf(format, val)
 			res = strings.ReplaceAll(res, fullMatch, formatted)
 		}
@@ -158,9 +183,9 @@ func getStringVal(m map[string]interface{}, key string, def string) string {
 }
 
 // getThreshold resolves matching threshold configuration
-func getThreshold(values map[string]interface{}, thresholds []Threshold) Threshold {
+func getThreshold(provider DataProvider, thresholds []Threshold) Threshold {
 	for _, t := range thresholds {
-		if evalCondition(t.Condition, values) {
+		if evalCondition(t.Condition, provider) {
 			return t
 		}
 	}
@@ -168,7 +193,7 @@ func getThreshold(values map[string]interface{}, thresholds []Threshold) Thresho
 }
 
 // evalCondition evaluates if condition matches current values
-func evalCondition(cond string, values map[string]interface{}) bool {
+func evalCondition(cond string, provider DataProvider) bool {
 	cond = strings.TrimSpace(cond)
 	if cond == "" {
 		return true
@@ -184,7 +209,7 @@ func evalCondition(cond string, values map[string]interface{}) bool {
 	rightStr := parts[2]
 
 	var leftVal float64
-	val, ok := values[varName]
+	val, ok := provider.GetValue(varName)
 	if !ok {
 		return false
 	}

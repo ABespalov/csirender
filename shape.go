@@ -24,14 +24,15 @@ func renderShape(dc *gg.Context, rc *RenderContext, el *ShapeElement) {
 	}
 
 	// 2. Prepare telemetry for thresholds
-	localTel := make(map[string]interface{}, len(rc.data.Values)+2)
-	for k, val := range rc.data.Values {
-		localTel[k] = val
+	localTel := &LocalDataProvider{
+		Parent:    rc.provider,
+		Overrides: make(map[string]interface{}),
 	}
+
 	if el.Source != "" {
-		if val, ok := rc.data.Values[el.Source]; ok {
-			localTel[el.Source] = val
-			localTel[cleanBase(el.Source)] = val
+		if val, ok := rc.provider.GetValue(el.Source); ok {
+			localTel.Overrides[el.Source] = val
+			localTel.Overrides[cleanBase(el.Source)] = val
 		}
 	}
 
@@ -72,13 +73,11 @@ func renderShape(dc *gg.Context, rc *RenderContext, el *ShapeElement) {
 	// 4. Determine rotation angle
 	rotation := el.Rotation
 	if el.RotationExpr != "" {
-		if rc.Resolver != nil {
-			if dynRot, ok := rc.Resolver(el.RotationExpr, el.Source); ok {
-				rotation += dynRot
-			}
+		if dynRot, ok := rc.provider.ResolveThreshold(el.RotationExpr, el.Source); ok {
+			rotation += dynRot
 		} else {
 			// Fallback: check if expression is exactly a telemetry key
-			if v, ok := rc.data.Values[el.RotationExpr]; ok {
+			if v, ok := rc.provider.GetValue(el.RotationExpr); ok {
 				if vf, ok := v.(float64); ok {
 					rotation += vf
 				}

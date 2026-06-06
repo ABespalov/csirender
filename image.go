@@ -28,15 +28,15 @@ func renderImage(dc *gg.Context, rc *RenderContext, el *ImageElement) {
 
 	// 3. Evaluate thresholds
 	if len(el.Thresholds) > 0 {
-		localTel := make(map[string]interface{}, len(rc.data.Values))
-		for k, val := range rc.data.Values {
-			localTel[k] = val
+		localTel := &LocalDataProvider{
+			Parent:    rc.provider,
+			Overrides: make(map[string]interface{}),
 		}
 
 		if el.Source != "" {
-			if val, ok := rc.data.Values[el.Source]; ok {
-				localTel[el.Source] = val
-				localTel[cleanBase(el.Source)] = val
+			if val, ok := rc.provider.GetValue(el.Source); ok {
+				localTel.Overrides[el.Source] = val
+				localTel.Overrides[cleanBase(el.Source)] = val
 			}
 		}
 

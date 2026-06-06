@@ -31,8 +31,8 @@ func main() {
 func handleRender(w http.ResponseWriter, r *http.Request) {
 	// 1. Load the layout configuration.
 	// Since we use the csirender parser, this is heavily cached.
-	// We go up one level since this runs in res/server/
-	cfg, err := parser.Parse("../example.yaml")
+	// We go up one level since this runs in examples/server/
+	cfg, err := parser.Parse("../../assets/example.yaml")
 	if err != nil {
 		http.Error(w, "Failed to load config: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -40,18 +40,20 @@ func handleRender(w http.ResponseWriter, r *http.Request) {
 
 	// 2. Prepare telemetry data
 	// In a real application, you would fetch this from sensors or a database.
-	data := csirender.RenderData{
-		Values: map[string]interface{}{
-			"temperature":       28.5,
-			"weather_condition": "sun",
-		},
-		Charts: map[string][]float64{
-			"temperature_history": {20, 22, 25, 27, 28.5},
+	data := &csirender.MapDataProvider{
+		Data: csirender.RenderData{
+			Values: map[string]interface{}{
+				"temperature":       28.5,
+				"weather_condition": "sun",
+			},
+			Charts: map[string][]float64{
+				"temperature_history": {20, 22, 25, 27, 28.5},
+			},
 		},
 	}
 
 	// 3. Render the dashboard
-	img, err := engine.Render(&cfg.LayoutConfig, data)
+	img, err := engine.RenderWithProvider(&cfg.LayoutConfig, data)
 	if err != nil {
 		http.Error(w, "Failed to render: "+err.Error(), http.StatusInternalServerError)
 		return

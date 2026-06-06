@@ -15,17 +15,15 @@ func renderChart(dc *gg.Context, rc *RenderContext, el *ChartElement) {
 	// buildLocalTel creates a per-bar/per-label telemetry snapshot overriding the
 	// chart source key with the given value, and injecting any domain-derived keys
 	// (e.g. zone.index) via the optional TelemetryEnricher callback.
-	buildLocalTel := func(v float64) map[string]interface{} {
-		local := make(map[string]interface{}, len(rc.data.Values)+8)
-		for k, val := range rc.data.Values {
-			local[k] = val
+	buildLocalTel := func(v float64) DataProvider {
+		local := &LocalDataProvider{
+			Parent:    rc.provider,
+			Overrides: make(map[string]interface{}),
 		}
-		local[el.Source] = v
-		local[cleanBase(el.Source)] = v
-		if rc.Enricher != nil {
-			for k, val := range rc.Enricher(el.Source, v) {
-				local[k] = val
-			}
+		local.Overrides[el.Source] = v
+		local.Overrides[cleanBase(el.Source)] = v
+		for k, val := range rc.provider.EnrichTelemetry(el.Source, v) {
+			local.Overrides[k] = val
 		}
 		return local
 	}
@@ -36,7 +34,7 @@ func renderChart(dc *gg.Context, rc *RenderContext, el *ChartElement) {
 	}
 
 	var data []float64
-	if d, ok := rc.data.Charts[el.Source]; ok {
+	if d, ok := rc.provider.GetChart(el.Source); ok {
 		data = d
 	} else {
 		data = make([]float64, numPoints)
@@ -156,7 +154,7 @@ func renderChart(dc *gg.Context, rc *RenderContext, el *ChartElement) {
 			}
 		} else {
 			// No per-bar thresholds: use global threshold as a uniform chart color
-			t := getThreshold(rc.data.Values, el.Thresholds)
+			t := getThreshold(rc.provider, el.Thresholds)
 			c = rc.parseColor(t.Bg)
 			if c == "" {
 				c = rc.parseColor(t.Color)
@@ -174,8 +172,8 @@ func renderChart(dc *gg.Context, rc *RenderContext, el *ChartElement) {
 	// Draw horizontal threshold guidelines
 	for _, tl := range el.ThresholdLines {
 		tlValue := tl.Value
-		if tlValue == 0 && rc.Resolver != nil {
-			if val, ok := rc.Resolver(tl.Condition, el.Source); ok {
+		if tlValue == 0 {
+			if val, ok := rc.provider.ResolveThreshold(tl.Condition, el.Source); ok {
 				tlValue = val
 			}
 		}

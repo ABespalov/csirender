@@ -8,7 +8,7 @@ import (
 )
 
 func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
-	valIntf := rc.data.Values[el.Source]
+	valIntf, _ := rc.provider.GetValue(el.Source)
 	valFloat := 0.0
 	valStr := ""
 	isString := false
@@ -31,7 +31,7 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 
 	base := cleanBase(el.Source)
 	label := ""
-	if lblVal, ok := rc.data.Values[base+".label"]; ok {
+	if lblVal, ok := rc.provider.GetValue(base + ".label"); ok {
 		label = fmt.Sprintf("%v", lblVal)
 	}
 	if label == "" {
@@ -43,12 +43,12 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 		unit = rc.resolvePlaceholders(el.Unit.Template)
 	}
 	if unit == "" && el.Unit.Parameter != "" {
-		if val, ok := rc.data.Values[el.Unit.Parameter]; ok {
+		if val, ok := rc.provider.GetValue(el.Unit.Parameter); ok {
 			unit = fmt.Sprintf("%v", val)
 		}
 	}
 	if unit == "" {
-		if val, ok := rc.data.Values[base+".unit"]; ok {
+		if val, ok := rc.provider.GetValue(base + ".unit"); ok {
 			unit = fmt.Sprintf("%v", val)
 		}
 	}
@@ -291,7 +291,7 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 			}
 		}
 
-		bT := getThreshold(rc.data.Values, el.Border.Thresholds)
+		bT := getThreshold(rc.provider, el.Border.Thresholds)
 		bg := rc.parseColor(bT.Bg)
 		if bg == "" {
 			bg = rc.parseColor(el.Border.Bg)
@@ -331,7 +331,7 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 
 	// Render components texts on top of background
 	if hasLabel {
-		lblT := getThreshold(rc.data.Values, el.Label.Thresholds)
+		lblT := getThreshold(rc.provider, el.Label.Thresholds)
 		lblFg := rc.parseColor(lblT.Fg)
 		if lblFg == "" {
 			lblFg = rc.parseColor(el.Label.Font.Fg)
@@ -346,7 +346,7 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 	}
 
 	if hasVal {
-		valT := getThreshold(rc.data.Values, el.Value.Thresholds)
+		valT := getThreshold(rc.provider, el.Value.Thresholds)
 		valFg := rc.parseColor(valT.Fg)
 		if valFg == "" {
 			valFg = rc.parseColor(el.Value.Font.Fg)
@@ -361,7 +361,7 @@ func renderValueCard(dc *gg.Context, rc *RenderContext, el *ValueCardElement) {
 	}
 
 	if hasUnit {
-		uT := getThreshold(rc.data.Values, el.Unit.Thresholds)
+		uT := getThreshold(rc.provider, el.Unit.Thresholds)
 		unitFg := rc.parseColor(uT.Fg)
 		if unitFg == "" {
 			unitFg = rc.parseColor(el.Unit.Font.Fg)

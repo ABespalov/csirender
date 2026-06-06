@@ -1,12 +1,12 @@
 # csirender
 
-![Version](https://img.shields.io/badge/version-v0.1.1a-blue)
+![Version](https://img.shields.io/badge/version-v0.2.0-blue)
 ![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
 
 `csirender` — это мощный, расширяемый движок декларативного 2D-рендеринга, написанный на Go. Он позволяет проектировать динамические дашборды и интерфейсы с помощью простых YAML или JSON конфигураций и рендерить их в стандартные изображения (PNG, BMP) или сырые данные, оптимизированные для EPD (e-ink) экранов.
 
-![Пример рендера](res/images/example_render.png)
-*(Изображение сгенерировано автоматически из файла [`res/example.yaml`](res/example.yaml))*
+![Пример рендера](assets/images/example_render.png)
+*(Изображение сгенерировано автоматически из файла [`assets/example.yaml`](assets/example.yaml))*
 
 ---
 
@@ -72,18 +72,22 @@ func main() {
 ```go
 engine := csirender.New()
 
-data := csirender.RenderData{
-	Values: map[string]interface{}{
-		"temperature": 28.5,
-		"weather_condition": "sun",
-	},
-	Charts: map[string][]float64{
-		"temperature_history": {20, 22, 25, 27, 28.5},
+// Для обратной совместимости оборачиваем словари в MapDataProvider,
+// или реализуем собственный DataProvider для "ленивых" вычислений!
+data := &csirender.MapDataProvider{
+	Data: csirender.RenderData{
+		Values: map[string]interface{}{
+			"temperature": 28.5,
+			"weather_condition": "sun",
+		},
+		Charts: map[string][]float64{
+			"temperature_history": {20, 22, 25, 27, 28.5},
+		},
 	},
 }
 
-// Render возвращает image.Image
-img, err := engine.Render(&cfg.LayoutConfig, data)
+// RenderWithProvider возвращает image.Image
+img, err := engine.RenderWithProvider(&cfg.LayoutConfig, data)
 if err != nil {
 	panic(err)
 }
@@ -91,7 +95,7 @@ if err != nil {
 // Теперь img можно закодировать в PNG/BMP и отправить клиенту или на дисплей
 ```
 
-*Полный рабочий пример клиент-серверной архитектуры находится в папках [`res/server/`](res/server/) и [`res/client/`](res/client/).*
+*Полный рабочий пример клиент-серверной архитектуры находится в папках [`examples/server/`](examples/server/) и [`examples/client/`](examples/client/).*
 
 ---
 
@@ -154,7 +158,7 @@ if err != nil {
   ```yaml
   thresholds:
     - condition: "val == 'rain'"
-      path: "res/images/rain.png"
+      path: "assets/images/rain.png"
   ```
 
 #### 5. Фигура (`type: shape`)
@@ -169,6 +173,11 @@ if err != nil {
 ---
 
 ## 📜 История изменений (Changelog)
+
+### v0.2.0
+- Интерфейс `DataProvider` пришел на замену структуре `RenderData` для ленивых вычислений телеметрии.
+- Добавлен метод `RenderWithProvider` для нового API.
+- Сохранена обратная совместимость со старым API `Render` через обертку `MapDataProvider`.
 
 ### v0.1.0 (Первый релиз)
 - Ядро декларативного 2D-рендеринга.
