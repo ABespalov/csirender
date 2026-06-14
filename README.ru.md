@@ -93,6 +93,7 @@ if err != nil {
 }
 
 // Теперь img можно закодировать в PNG/BMP и отправить клиенту или на дисплей
+// Или использовать csirender.EncodePartialImage(oldImg, img, "epd_pr", ...) для частичного обновления E-Ink экранов!
 ```
 
 *Полный рабочий пример клиент-серверной архитектуры находится в папках [`examples/server/`](examples/server/) и [`examples/client/`](examples/client/).*
@@ -110,7 +111,7 @@ if err != nil {
 | `screen.width` / `height` | Размеры холста в пикселях. |
 | `screen.anti_aliasing` | Boolean. Включите для сглаживания или отключите для пиксель-арт рендера (полезно для e-ink). |
 | `screen.palette` | Словарь для маппинга логических имен цветов на Hex-коды (например, `white: "#FFFFFF"`). |
-| `output.format` | Формат вывода (`png`, `bmp`, `epd_raw`). |
+| `output.format` | Формат вывода (`png`, `bmp`, `epd_raw`, `epd_pr`). |
 | `output.background` | Базовый цвет фона холста. |
 | `fonts.<name>` | Объявление шрифтов. Укажите `file` (путь к `.ttf`), `size` и режим `hinting` (`full`, `vertical`, `none`). |
 
@@ -175,6 +176,8 @@ if err != nil {
 ## 📜 История изменений (Changelog)
 
 ### v0.2.0
+- Внедрена функция `EncodePartialImage` для поддержки инкрементального (частичного) обновления E-Ink экранов в формате `epd_pr`.
+- Добавлен алгоритм поиска "грязных" зон по сетке 8x8 пикселей для вычисления минимальных ограничивающих прямоугольников (bounding boxes) между кадрами.
 - Интерфейс `DataProvider` пришел на замену структуре `RenderData` для ленивых вычислений телеметрии.
 - Добавлен метод `RenderWithProvider` для нового API.
 - Сохранена обратная совместимость со старым API `Render` через обертку `MapDataProvider`.

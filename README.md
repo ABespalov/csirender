@@ -93,6 +93,7 @@ if err != nil {
 }
 
 // You can now encode `img` to PNG/BMP and send it over HTTP or SPI.
+// Or you can use csirender.EncodePartialImage(oldImg, img, "epd_pr", ...) for E-Ink partial refreshes!
 ```
 
 *For a complete, runnable client-server architecture, see the [`examples/server/`](examples/server/) and [`examples/client/`](examples/client/) examples.*
@@ -110,7 +111,7 @@ The library revolves around the `LayoutConfig` structure. Below is a comprehensi
 | `screen.width` / `height` | Canvas dimensions in pixels. |
 | `screen.anti_aliasing` | Boolean. Enable for smooth lines, disable for sharp, pixel-perfect e-ink rendering. |
 | `screen.palette` | Map of logical color names to Hex codes (e.g., `white: "#FFFFFF"`). |
-| `output.format` | Desired output serialization (`png`, `bmp`, `epd_raw`). |
+| `output.format` | Desired output serialization (`png`, `bmp`, `epd_raw`, `epd_pr`). |
 | `output.background` | Base canvas fill color. |
 | `fonts.<name>` | Define reusable font faces. Provide `file` (path to `.ttf`), `size`, and `hinting` (`full`, `vertical`, `none`). |
 
@@ -175,6 +176,8 @@ Draws geometric primitives.
 ## 📜 Changelog
 
 ### v0.2.0
+- Introduced `EncodePartialImage` to support `epd_pr` (partial refresh) incremental byte streaming for E-Ink displays.
+- Added 8x8 pixel bounding-box detection to compute minimal diffing rectangles between states.
 - Replaced `RenderData` with `DataProvider` interface for lazy evaluation of telemetry values and charts.
 - Added `RenderWithProvider` for new API consumers.
 - Maintained backward compatibility via `MapDataProvider`.
