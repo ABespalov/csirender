@@ -135,6 +135,7 @@ type ChartElement struct {
 	BaseElement    `yaml:",inline" json:",inline"`
 	Style          string                 `yaml:"style,omitempty" json:"style,omitempty"`
 	Duration       string                 `yaml:"duration,omitempty" json:"duration,omitempty"`
+	RefreshDelay   string                 `yaml:"refresh_delay,omitempty" json:"refresh_delay,omitempty"`
 	Points         int                    `yaml:"points,omitempty" json:"points,omitempty"`
 	Axis           map[string]interface{} `yaml:"axis,omitempty" json:"axis,omitempty"`
 	ThresholdLines []ThresholdLine        `yaml:"threshold_lines,omitempty" json:"threshold_lines,omitempty"`
