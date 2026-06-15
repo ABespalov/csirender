@@ -41,7 +41,7 @@ func max(a, b int) int {
 }
 
 // EncodePartialImage encodes an image using the epd_pr (partial refresh) format.
-// It compares oldImg and newImg to find bounding boxes of differences on an 8x8 grid.
+// It compares oldImg and newImg to find bounding boxes of differences on a 4x4 grid.
 // If oldImg is nil, it encodes the entire newImg as a single tile.
 func EncodePartialImage(oldImg, newImg image.Image, format string, mapping map[string][]int, palette map[string]string) ([]byte, error) {
 	if mapping == nil {
@@ -58,9 +58,9 @@ func EncodePartialImage(oldImg, newImg image.Image, format string, mapping map[s
 		// Full refresh
 		components = append(components, rect{minX: 0, minY: 0, maxX: width, maxY: height})
 	} else {
-		// Partial refresh: find dirty 8x8 blocks
-		gridW := (width + 7) / 8
-		gridH := (height + 7) / 8
+		// Partial refresh: find dirty 4x4 blocks
+		gridW := (width + 3) / 4
+		gridH := (height + 3) / 4
 
 		dirty := make([][]bool, gridH)
 		for i := range dirty {
@@ -70,8 +70,8 @@ func EncodePartialImage(oldImg, newImg image.Image, format string, mapping map[s
 		for gy := 0; gy < gridH; gy++ {
 			for gx := 0; gx < gridW; gx++ {
 				isDirty := false
-				for y := gy * 8; y < (gy+1)*8 && y < height; y++ {
-					for x := gx * 8; x < (gx+1)*8 && x < width; x++ {
+				for y := gy * 4; y < (gy+1)*4 && y < height; y++ {
+					for x := gx * 4; x < (gx+1)*4 && x < width; x++ {
 						c1 := oldImg.At(x, y)
 						c2 := newImg.At(x, y)
 						r1, g1, b1, _ := c1.RGBA()
@@ -136,10 +136,10 @@ func EncodePartialImage(oldImg, newImg image.Image, format string, mapping map[s
 					}
 
 					rc := rect{
-						minX: minX * 8,
-						minY: minY * 8,
-						maxX: (maxX + 1) * 8,
-						maxY: (maxY + 1) * 8,
+						minX: minX * 4,
+						minY: minY * 4,
+						maxX: (maxX + 1) * 4,
+						maxY: (maxY + 1) * 4,
 					}
 					if rc.maxX > width {
 						rc.maxX = width
